@@ -5,9 +5,13 @@ import 'package:get/get.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/themes/app_colors.dart';
 import '../../../core/themes/app_typography.dart';
-import '../../../modules/auth/controllers/auth_controller.dart';
 import '../../../routes/app_routes.dart';
 import '../../../widgets/app_card.dart';
+import '../../ai_coach/views/ai_coach_screen.dart';
+import '../../nutrition/views/nutrition_screen.dart';
+import '../../profile/views/profile_screen.dart';
+import '../../progress/views/progress_screen.dart';
+import '../../workouts/views/workout_list_screen.dart';
 import '../controllers/dashboard_controller.dart';
 
 /// Main dashboard with bottom navigation — Phase 1 shell.
@@ -23,6 +27,14 @@ class DashboardScreen extends GetView<DashboardController> {
     (Icons.person_outline_rounded, Icons.person_rounded, 'Profile'),
   ];
 
+  static final List<Widget> _screens = [
+    const _HomeTab(),
+    const WorkoutListScreen(),
+    const NutritionScreen(),
+    const AiCoachScreen(),
+    const ProfileScreen(),
+  ];
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -31,14 +43,8 @@ class DashboardScreen extends GetView<DashboardController> {
       backgroundColor:
           isDark ? AppColors.darkBackground : AppColors.lightBackground,
       body: Obx(() => IndexedStack(
-            index: controller.selectedIndex.value,
-            children: const [
-              _HomeTab(),
-              _WorkoutTab(),
-              _NutritionTab(),
-              _AICoachTab(),
-              _ProfileTab(),
-            ],
+            index: controller.currentTabIndex.value,
+            children: _screens,
           )),
       bottomNavigationBar: _BottomNav(isDark: isDark),
     );
@@ -82,10 +88,10 @@ class _BottomNav extends GetView<DashboardController> {
                           selectedIcon: e.value.$2,
                           unselectedIcon: e.value.$1,
                           label: e.value.$3,
-                          isSelected: controller.selectedIndex.value == e.key,
+                          isSelected: controller.currentTabIndex.value == e.key,
                           isDark: isDark,
                           onTap: () =>
-                              controller.selectedIndex.value = e.key,
+                              controller.currentTabIndex.value = e.key,
                         ))
                     .toList(),
               )),
