@@ -6,8 +6,7 @@
 // lib/modules/dashboard/bindings/dashboard_binding.dart
 
 import 'package:get/get.dart';
-import '../controllers/dashboard_controller.dart';
-import '../../auth/controllers/auth_controller.dart';
+import '../auth/controllers/auth_controller.dart';
 
 class DashboardBinding extends Bindings {
   @override

@@ -153,14 +153,9 @@ class WorkoutListScreen extends GetView<WorkoutController> {
       itemCount: 6,
       itemBuilder: (_, __) => Padding(
         padding: const EdgeInsets.only(bottom: AppConstants.spacingMd),
-        child: ShimmerWidget(
-          child: Container(
-            height: 120,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(AppConstants.radiusLg),
-            ),
-          ),
+        child: ShimmerWidget.rectangular(
+          height: 120,
+           width: 90,
         ),
       ),
     );

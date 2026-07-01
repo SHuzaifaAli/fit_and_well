@@ -264,7 +264,7 @@ class SubscriptionScreen extends GetView<SubscriptionController> {
                                             ? AppColors.gray700
                                             : AppColors.gray200),
                                     borderRadius: BorderRadius.circular(
-                                        AppConstants.radiusXs),
+                                        4.0),
                                   ),
                                   child: Text(
                                     plan['savings'] as String,

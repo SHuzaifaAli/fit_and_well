@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:uuid/uuid.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../../core/utils/fitness_calculator.dart';
 import '../../../data/models/nutrition_model.dart';
 import '../../../data/repositories/nutrition_repository.dart';
@@ -68,9 +69,9 @@ class NutritionController extends GetxController {
       age: user.age!,
       gender: user.gender ?? 'male',
     );
-    return FitnessCalculator.calculateTDEE(
+    return FitnessCalculator.calculateTDEEFromBMR(
       bmr: bmr,
-      activityLevel: user.activityLevel ?? 'moderate',
+      activityLevel: user.activityLevel ?? AppConstants.activityModeratelyActive,
     );
   }
 

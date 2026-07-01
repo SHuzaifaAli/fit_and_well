@@ -4,6 +4,9 @@ import '../controllers/ai_coach_controller.dart';
 class AiCoachBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<AiCoachController>(() => AiCoachController(), fenix: true);
+    Get.lazyPut<AiCoachController>(
+      () => AiCoachController(),
+      fenix: true,
+    );
   }
 }

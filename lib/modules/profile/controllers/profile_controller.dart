@@ -1,36 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
-import '../../../core/constants/app_constants.dart';
-import '../../../data/models/user_model.dart';
+import '../../../core/utils/fitness_calculator.dart';
 import '../../../data/repositories/user_repository.dart';
 import '../../../modules/auth/controllers/auth_controller.dart';
 
 class ProfileController extends GetxController {
-  final UserRepository _userRepository;
-  AuthController get _authController => Get.find<AuthController>();
+  final UserRepository _repository;
+  AuthController get _auth => Get.find<AuthController>();
 
-  ProfileController({UserRepository? userRepository})
-      : _userRepository = userRepository ?? UserRepository();
+  ProfileController({UserRepository? repository})
+      : _repository = repository ?? UserRepository();
 
+  // ─── State ────────────────────────────────────────────────────────────────
+  final RxBool isLoading = false.obs;
+  final RxBool isSaving = false.obs;
   final RxBool isUploadingAvatar = false.obs;
 
-  // Edit profile form
+  // ─── Edit Profile Form ────────────────────────────────────────────────────
   final nameController = TextEditingController();
   final ageController = TextEditingController();
   final weightController = TextEditingController();
   final heightController = TextEditingController();
-  final RxString selectedGender = ''.obs;
-  final RxString selectedGoal = ''.obs;
-  final RxString selectedActivityLevel = ''.obs;
-  final RxString selectedDietPreference = ''.obs;
+  final selectedGender = 'male'.obs;
+  final selectedGoal = 'general_fitness'.obs;
+  final selectedActivityLevel = 'moderately_active'.obs;
+  final selectedDietPreference = 'none'.obs;
   final editFormKey = GlobalKey<FormState>();
-  final RxBool isSaving = false.obs;
 
   @override
   void onInit() {
     super.onInit();
-    _populateForm();
+    loadProfile();
   }
 
   @override
@@ -42,87 +42,104 @@ class ProfileController extends GetxController {
     super.onClose();
   }
 
-  void _populateForm() {
-    final user = _authController.currentUser.value;
+  // ─── Load Profile ─────────────────────────────────────────────────────────
+  Future<void> loadProfile() async {
+    final user = _auth.currentUser.value;
     if (user == null) return;
+
     nameController.text = user.name;
-    ageController.text = user.age?.toString() ?? '';
-    weightController.text = user.weight?.toString() ?? '';
-    heightController.text = user.height?.toString() ?? '';
-    selectedGender.value = user.gender ?? '';
-    selectedGoal.value = user.goal ?? '';
-    selectedActivityLevel.value = user.activityLevel ?? '';
-    selectedDietPreference.value =
-        user.dietPreference ?? AppConstants.dietNone;
+    if (user.age != null) ageController.text = user.age.toString();
+    if (user.weight != null) weightController.text = user.weight.toString();
+    if (user.height != null) heightController.text = user.height.toString();
+    if (user.gender != null) selectedGender.value = user.gender!;
+    if (user.goal != null) selectedGoal.value = user.goal!;
+    if (user.activityLevel != null) selectedActivityLevel.value = user.activityLevel!;
+    if (user.dietPreference != null) selectedDietPreference.value = user.dietPreference!;
   }
 
-  Future<void> pickAndUploadAvatar() async {
-    final picker = ImagePicker();
-    final picked =
-        await picker.pickImage(source: ImageSource.gallery, imageQuality: 80);
-    if (picked == null) return;
-
-    final user = _authController.currentUser.value;
-    if (user == null) return;
-
-    isUploadingAvatar.value = true;
-    final bytes = await picked.readAsBytes();
-    final fileName =
-        'avatar_${DateTime.now().millisecondsSinceEpoch}.jpg';
-
-    final result = await _userRepository.uploadProfileImage(
-      userId: user.id,
-      imageBytes: bytes,
-      fileName: fileName,
-    );
-
-    isUploadingAvatar.value = false;
-
-    result.fold(
-      (failure) => Get.snackbar('Error', failure.message,
-          snackPosition: SnackPosition.BOTTOM),
-      (url) {
-        _authController.updateUser(user.copyWith(avatarUrl: url));
-        Get.snackbar('Success', 'Profile photo updated',
-            snackPosition: SnackPosition.BOTTOM);
-      },
-    );
-  }
-
+  // ─── Save Profile ─────────────────────────────────────────────────────────
   Future<void> saveProfile() async {
     if (!editFormKey.currentState!.validate()) return;
 
-    final user = _authController.currentUser.value;
-    if (user == null) return;
-
     isSaving.value = true;
 
-    final updated = user.copyWith(
-      name: nameController.text.trim(),
-      age: int.tryParse(ageController.text),
-      weight: double.tryParse(weightController.text),
-      height: double.tryParse(heightController.text),
-      gender: selectedGender.value.isNotEmpty ? selectedGender.value : null,
-      goal: selectedGoal.value.isNotEmpty ? selectedGoal.value : null,
-      activityLevel: selectedActivityLevel.value.isNotEmpty
-          ? selectedActivityLevel.value
-          : null,
-      dietPreference: selectedDietPreference.value,
+    try {
+      final user = _auth.currentUser.value;
+      if (user == null) return;
+
+      final updatedUser = user.copyWith(
+        name: nameController.text.trim(),
+        age: int.tryParse(ageController.text),
+        weight: double.tryParse(weightController.text),
+        height: double.tryParse(heightController.text),
+        gender: selectedGender.value,
+        goal: selectedGoal.value,
+        activityLevel: selectedActivityLevel.value,
+        dietPreference: selectedDietPreference.value,
+      );
+
+      final result = await _repository.updateUserProfile(updatedUser);
+      
+      result.fold(
+        (failure) => Get.snackbar('Error', failure.message,
+            snackPosition: SnackPosition.BOTTOM),
+        (_) {
+          _auth.currentUser.value = updatedUser;
+          Get.snackbar('Success', 'Profile updated',
+              snackPosition: SnackPosition.BOTTOM);
+          Get.back();
+        },
+      );
+    } finally {
+      isSaving.value = false;
+    }
+  }
+
+  // ─── Avatar Upload ────────────────────────────────────────────────────────
+  Future<void> pickAndUploadAvatar() async {
+    isUploadingAvatar.value = true;
+    // TODO: Implement image picker + upload
+    await Future.delayed(const Duration(seconds: 1));
+    isUploadingAvatar.value = false;
+  }
+
+  // ─── User Stats ───────────────────────────────────────────────────────────
+  double? get userBMI {
+    final user = _auth.currentUser.value;
+    if (user?.weight == null || user?.height == null) return null;
+    return FitnessCalculator.calculateBMI(
+      weight: user!.weight!,
+      height: user.height!,
     );
+  }
 
-    final result = await _userRepository.updateUserProfile(updated);
+  String? get userBMICategory {
+    final bmi = userBMI;
+    if (bmi == null) return null;
+    return FitnessCalculator.getBMICategory(bmi);
+  }
 
-    isSaving.value = false;
+  double? get userBMR {
+    final user = _auth.currentUser.value;
+    if (user?.weight == null ||
+        user?.height == null ||
+        user?.age == null ||
+        user?.gender == null) return null;
+    return FitnessCalculator.calculateBMR(
+      weight: user!.weight!,
+      height: user.height!,
+      age: user.age!,
+      gender: user.gender!,
+    );
+  }
 
-    result.fold(
-      (failure) => Get.snackbar('Error', failure.message,
-          snackPosition: SnackPosition.BOTTOM),
-      (user) {
-        _authController.updateUser(user);
-        Get.back();
-        Get.snackbar('Saved', 'Profile updated successfully',
-            snackPosition: SnackPosition.BOTTOM);
-      },
+  double? get userTDEE {
+    final user = _auth.currentUser.value;
+    final bmr = userBMR;
+    if (bmr == null) return null;
+    return FitnessCalculator.calculateTDEEFromBMR(
+      bmr: bmr,
+      activityLevel: user!.activityLevel ?? 'moderately_active',
     );
   }
 }

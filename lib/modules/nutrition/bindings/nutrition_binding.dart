@@ -5,6 +5,8 @@ class NutritionBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<NutritionController>(
-        () => NutritionController(), fenix: true);
+      () => NutritionController(),
+      fenix: true,
+    );
   }
 }

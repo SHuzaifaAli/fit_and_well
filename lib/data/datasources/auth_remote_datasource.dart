@@ -1,7 +1,7 @@
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../core/errors/app_exceptions.dart';
+import '../../core/errors/app_exceptions.dart' as AuthExceptions;
 import '../../core/services/supabase_service.dart';
 import '../models/user_model.dart';
 
@@ -24,22 +24,22 @@ class AuthRemoteDatasource {
       );
 
       if (response.user == null) {
-        throw AuthException.invalidCredentials();
+        throw AuthExceptions.AuthException.invalidCredentials();
       }
 
       return await _fetchOrCreateUserProfile(response.user!);
     } on AuthException {
       rethrow;
-    } on AuthException catch (e) {
+    } on AuthExceptions.AuthException catch (e) {
       throw _mapSupabaseAuthError(e.toString());
     } catch (e) {
       if (e.toString().contains('Invalid login credentials')) {
-        throw AuthException.invalidCredentials();
+        throw AuthExceptions.AuthException.invalidCredentials();
       }
       if (e.toString().contains('Email not confirmed')) {
-        throw AuthException.emailNotVerified();
+        throw AuthExceptions.AuthException.emailNotVerified();
       }
-      throw AuthException.unknown(e);
+      throw AuthExceptions.AuthException.unknown(e);
     }
   }
 
@@ -56,7 +56,7 @@ class AuthRemoteDatasource {
       );
 
       if (response.user == null) {
-        throw AuthException.unknown();
+        throw AuthExceptions.AuthException.unknown();
       }
 
       // Create user profile in database
@@ -76,12 +76,12 @@ class AuthRemoteDatasource {
       rethrow;
     } catch (e) {
       if (e.toString().contains('already registered')) {
-        throw AuthException.emailAlreadyInUse();
+        throw AuthExceptions.AuthException.emailAlreadyInUse();
       }
       if (e.toString().contains('Password should be')) {
-        throw AuthException.weakPassword();
+        throw AuthExceptions.AuthException.weakPassword();
       }
-      throw AuthException.unknown(e);
+      throw AuthExceptions.AuthException.unknown(e);
     }
   }
 
@@ -89,7 +89,7 @@ class AuthRemoteDatasource {
     try {
       await SupabaseService.auth.signOut();
     } catch (e) {
-      throw AuthException.unknown(e);
+      throw AuthExceptions.AuthException.unknown(e);
     }
   }
 
@@ -99,7 +99,7 @@ class AuthRemoteDatasource {
         email.trim().toLowerCase(),
       );
     } catch (e) {
-      throw AuthException.unknown(e);
+      throw AuthExceptions.AuthException.unknown(e);
     }
   }
 
@@ -109,7 +109,7 @@ class AuthRemoteDatasource {
         UserAttributes(password: newPassword),
       );
     } catch (e) {
-      throw AuthException.unknown(e);
+      throw AuthExceptions.AuthException.unknown(e);
     }
   }
 
@@ -119,7 +119,7 @@ class AuthRemoteDatasource {
     try {
       final googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
-        throw AuthException.googleSignInFailed('User cancelled');
+        throw AuthExceptions.AuthException.googleSignInFailed('User cancelled');
       }
 
       final googleAuth = await googleUser.authentication;
@@ -127,7 +127,7 @@ class AuthRemoteDatasource {
       final idToken = googleAuth.idToken;
 
       if (accessToken == null || idToken == null) {
-        throw AuthException.googleSignInFailed('Missing tokens');
+        throw AuthExceptions.AuthException.googleSignInFailed('Missing tokens');
       }
 
       final response = await SupabaseService.auth.signInWithIdToken(
@@ -137,7 +137,7 @@ class AuthRemoteDatasource {
       );
 
       if (response.user == null) {
-        throw AuthException.googleSignInFailed();
+        throw AuthExceptions.AuthException.googleSignInFailed();
       }
 
       return await _fetchOrCreateUserProfile(
@@ -148,7 +148,7 @@ class AuthRemoteDatasource {
     } on AuthException {
       rethrow;
     } catch (e) {
-      throw AuthException.googleSignInFailed(e);
+      throw AuthExceptions.AuthException.googleSignInFailed(e);
     }
   }
 
@@ -165,7 +165,7 @@ class AuthRemoteDatasource {
 
       final idToken = credential.identityToken;
       if (idToken == null) {
-        throw AuthException.appleSignInFailed('Missing identity token');
+        throw AuthExceptions.AuthException.appleSignInFailed('Missing identity token');
       }
 
       final response = await SupabaseService.auth.signInWithIdToken(
@@ -174,7 +174,7 @@ class AuthRemoteDatasource {
       );
 
       if (response.user == null) {
-        throw AuthException.appleSignInFailed();
+        throw AuthExceptions.AuthException.appleSignInFailed();
       }
 
       final name = [
@@ -189,7 +189,7 @@ class AuthRemoteDatasource {
     } on AuthException {
       rethrow;
     } catch (e) {
-      throw AuthException.appleSignInFailed(e);
+      throw AuthExceptions.AuthException.appleSignInFailed(e);
     }
   }
 
@@ -267,19 +267,19 @@ class AuthRemoteDatasource {
     });
   }
 
-  AuthException _mapSupabaseAuthError(String error) {
+  AuthExceptions.AuthException _mapSupabaseAuthError(String error) {
     if (error.contains('Invalid login credentials')) {
-      return AuthException.invalidCredentials();
+      return AuthExceptions.AuthException.invalidCredentials();
     }
     if (error.contains('User already registered')) {
-      return AuthException.emailAlreadyInUse();
+      return AuthExceptions.AuthException.emailAlreadyInUse();
     }
     if (error.contains('Password should be')) {
-      return AuthException.weakPassword();
+      return AuthExceptions.AuthException.weakPassword();
     }
     if (error.contains('Email not confirmed')) {
-      return AuthException.emailNotVerified();
+      return AuthExceptions.AuthException.emailNotVerified();
     }
-    return AuthException.unknown(error);
+    return AuthExceptions.AuthException.unknown(error);
   }
 }

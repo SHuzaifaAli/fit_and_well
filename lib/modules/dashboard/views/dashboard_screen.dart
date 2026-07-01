@@ -8,9 +8,9 @@ import '../../../core/themes/app_typography.dart';
 import '../../../routes/app_routes.dart';
 import '../../../widgets/app_card.dart';
 import '../../ai_coach/views/ai_coach_screen.dart';
+import '../../auth/controllers/auth_controller.dart';
 import '../../nutrition/views/nutrition_screen.dart';
 import '../../profile/views/profile_screen.dart';
-import '../../progress/views/progress_screen.dart';
 import '../../workouts/views/workout_list_screen.dart';
 import '../controllers/dashboard_controller.dart';
 

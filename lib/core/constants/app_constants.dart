@@ -145,6 +145,7 @@ class AppConstants {
   // Animation Durations
   static const Duration animFast = Duration(milliseconds: 200);
   static const Duration animNormal = Duration(milliseconds: 350);
+  static const Duration animMedium = Duration(milliseconds: 400);
   static const Duration animSlow = Duration(milliseconds: 500);
 
   // Spacing
@@ -156,6 +157,7 @@ class AppConstants {
   static const double spacingXxl = 48.0;
 
   // Border Radius
+  static const double radiusXs = 4.0;
   static const double radiusSm = 8.0;
   static const double radiusMd = 12.0;
   static const double radiusLg = 16.0;

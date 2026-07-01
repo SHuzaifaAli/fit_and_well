@@ -40,7 +40,7 @@ class WorkoutCompleteScreen extends GetView<WorkoutController> {
                 ),
               )
                   .animate()
-                  .scale(duration: AppConstants.animMedium, curve: Curves.elasticOut)
+                  .scale(duration: const Duration(milliseconds: 400), curve: Curves.elasticOut)
                   .fadeIn(),
 
               const SizedBox(height: AppConstants.spacingXxl),
@@ -87,7 +87,7 @@ class WorkoutCompleteScreen extends GetView<WorkoutController> {
                   ),
                   _StatItem(
                     label: 'Exercises',
-                    value: '${controller.currentExercises.length}',
+                    value: '${controller.activeWorkout.value?.exercises.length ?? 0}',
                     icon: Icons.fitness_center_outlined,
                     isDark: isDark,
                   ),

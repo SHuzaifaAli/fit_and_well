@@ -141,7 +141,7 @@ class WorkoutDetailScreen extends GetView<WorkoutController> {
                       isDark: isDark,
                     )
                         .animate(
-                            delay: Duration(milliseconds: 100 + i * 50))
+                            delay: Duration(milliseconds: 100 + (i as int) * 50))
                         .fadeIn()
                         .slideY(begin: 0.05, end: 0);
                   }),

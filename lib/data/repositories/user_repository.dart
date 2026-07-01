@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
-import '../../core/errors/app_exceptions.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../core/errors/app_exceptions.dart' as appException;
 import '../../core/errors/failures.dart';
 import '../../core/services/supabase_service.dart';
 import '../models/user_model.dart';
@@ -14,7 +15,7 @@ class UserRepository {
           .single();
       return Right(UserModel.fromJson(response));
     } catch (e) {
-      return Left(DatabaseFailure.fromException(DatabaseException.readError(e)));
+      return Left(DatabaseFailure.fromException(appException.DatabaseException.readError(e)));
     }
   }
 
@@ -29,7 +30,7 @@ class UserRepository {
       return Right(UserModel.fromJson(response));
     } catch (e) {
       return Left(
-          DatabaseFailure.fromException(DatabaseException.writeError(e)));
+          DatabaseFailure.fromException(appException.DatabaseException.writeError(e)));
     }
   }
 
@@ -59,7 +60,7 @@ class UserRepository {
 
       return Right(url);
     } catch (e) {
-      return Left(StorageFailure.fromException(StorageException.uploadFailed(e)));
+      return Left(StorageFailure.fromException(appException.StorageException.uploadFailed(e)));
     }
   }
 }

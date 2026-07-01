@@ -156,4 +156,11 @@ class Validators {
     }
     return null;
   }
+  /// Validate positive numeric input
+  static String? positiveNumber(String? value) {
+    if (value == null || value.isEmpty) return 'Required';
+    final num = double.tryParse(value);
+    if (num == null || num <= 0) return 'Must be greater than 0';
+    return null;
+  }
 }

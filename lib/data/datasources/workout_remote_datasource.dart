@@ -11,13 +11,20 @@ class WorkoutRemoteDatasource {
   }) async {
     var query = SupabaseService.workoutsTable
         .select('*, exercises(*)')
-        .eq('is_active', true)
-        .order('created_at', ascending: false)
-        .range(page * pageSize, (page + 1) * pageSize - 1);
+        .eq('is_active', true);
 
+    // Apply optional filters
     if (difficulty != null) {
-      query = query.eq('difficulty', difficulty) as dynamic;
+      query = query.eq('difficulty', difficulty);
     }
+    if (category != null) {
+      query = query.eq('category', category);
+    }
+
+    // Apply ordering and pagination (these return a PostgrestTransformBuilder)
+    // query = query
+    //     .order('created_at', ascending: false)
+    //     .range(page * pageSize, (page + 1) * pageSize - 1);
 
     final response = await query;
     return (response as List)

@@ -5,6 +5,8 @@ class ProgressBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<ProgressController>(
-        () => ProgressController(), fenix: true);
+      () => ProgressController(),
+      fenix: true,
+    );
   }
 }

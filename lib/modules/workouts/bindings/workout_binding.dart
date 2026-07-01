@@ -4,6 +4,9 @@ import '../controllers/workout_controller.dart';
 class WorkoutBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<WorkoutController>(() => WorkoutController(), fenix: true);
+    Get.lazyPut<WorkoutController>(
+      () => WorkoutController(),
+      fenix: true,
+    );
   }
 }

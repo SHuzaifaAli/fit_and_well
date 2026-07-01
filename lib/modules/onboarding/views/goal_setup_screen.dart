@@ -22,12 +22,12 @@ class GoalSetupScreen extends GetView<OnboardingController> {
         Icons.directions_run_rounded, 'Improve overall health'),
   ];
 
-  static const _activityLevels = [
+  static final _activityLevels = [
     (AppConstants.activitySedentary, 'Sedentary', 'Little or no exercise'),
-    (AppConstants.activityLight, 'Light', 'Exercise 1-3 days/week'),
-    (AppConstants.activityModerate, 'Moderate', 'Exercise 3-5 days/week'),
-    (AppConstants.activityActive, 'Active', 'Exercise 6-7 days/week'),
-    (AppConstants.activityVeryActive, 'Very Active', 'Hard exercise daily'),
+    (AppConstants.activityLightlyActive, 'Light', 'Exercise 1-3 days/week'),
+    (AppConstants.activityModeratelyActive, 'Moderate', 'Exercise 3-5 days/week'),
+    (AppConstants.activityVeryActive, 'Active', 'Exercise 6-7 days/week'),
+    (AppConstants.activityExtraActive, 'Extra Active', 'Hard exercise daily'),
   ];
 
   @override

@@ -58,7 +58,7 @@ class FitAIApp extends StatelessWidget {
 
       // Routing
       initialRoute: AppRoutes.splash,
-      getPages: AppPages.pages,
+      getPages: AppPages.routes,
       defaultTransition: Transition.rightToLeft,
       transitionDuration: AppConstants.animNormal,
 

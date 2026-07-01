@@ -75,6 +75,16 @@ class FitnessCalculator {
     }
   }
 
+
+  /// Calculate TDEE from a pre-computed BMR (convenience overload)
+  static double calculateTDEEFromBMR({
+    required double bmr,
+    required String activityLevel,
+  }) {
+    final multiplier = AppConstants.activityMultipliers[activityLevel] ?? 1.2;
+    return bmr * multiplier;
+  }
+
   /// Calculate BMI
   static double calculateBMI({
     required double weight, // kg

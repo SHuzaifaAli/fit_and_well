@@ -20,6 +20,7 @@ abstract class AppRoutes {
   static const String workouts = '/workouts';
   static const String workoutDetail = '/workouts/detail';
   static const String workoutActive = '/workouts/active';
+  static const String activeWorkout = '/workouts/active';
   static const String workoutComplete = '/workouts/complete';
   static const String exerciseLibrary = '/exercises';
   static const String exerciseDetail = '/exercises/detail';
@@ -54,4 +55,5 @@ abstract class AppRoutes {
   static const String subscription = '/subscription';
   static const String subscriptionSuccess = '/subscription/success';
   static const String subscriptionManage = '/subscription/manage';
+  static const String home = '/dashboard/home';
 }

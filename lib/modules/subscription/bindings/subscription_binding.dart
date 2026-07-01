@@ -5,6 +5,8 @@ class SubscriptionBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<SubscriptionController>(
-        () => SubscriptionController(), fenix: true);
+      () => SubscriptionController(),
+      fenix: true,
+    );
   }
 }
